@@ -23,13 +23,10 @@ func TestSet_New_parameters(t *testing.T) {
 }
 
 func TestSet_Add(t *testing.T) {
-	s := New()
-	s.Add(1)
-	s.Add(2)
-	s.Add(2) // duplicate
-	s.Add("fatih")
-	s.Add("zeynep")
-	s.Add("zeynep") // another duplicate
+	s := New().Add(1)
+	s = s.Add(2).Add(2) // duplicate
+	s = s.Add("fatih")
+	s = s.Add("zeynep").Add("zeynep") // another duplicate
 
 	if s.Size() != 4 {
 		t.Error("Add: items are not unique. The set size should be four")
@@ -41,8 +38,7 @@ func TestSet_Add(t *testing.T) {
 }
 
 func TestSet_Add_multiple(t *testing.T) {
-	s := New()
-	s.Add("ankara", "san francisco", 3.14)
+	s := New().Add("ankara", "san francisco", 3.14)
 
 	if s.Size() != 3 {
 		t.Error("Add: items are not unique. The set size should be three")
@@ -54,34 +50,28 @@ func TestSet_Add_multiple(t *testing.T) {
 }
 
 func TestSet_Remove(t *testing.T) {
-	s := New()
-	s.Add(1)
-	s.Add(2)
-	s.Add("fatih")
-
-	s.Remove(1)
+	s := New().Add(1).Add(2).Add("fatih")
+	s = s.Remove(1)
 	if s.Size() != 2 {
 		t.Error("Remove: set size should be two after removing")
 	}
 
-	s.Remove(1)
+	s = s.Remove(1)
 	if s.Size() != 2 {
 		t.Error("Remove: set size should be not change after trying to remove a non-existing item")
 	}
 
-	s.Remove(2)
-	s.Remove("fatih")
+	s = s.Remove(2).Remove("fatih")
 	if s.Size() != 0 {
 		t.Error("Remove: set size should be zero")
 	}
 
-	s.Remove("fatih") // try to remove something from a zero length set
+	s = s.Remove("fatih") // try to remove something from a zero length set
 }
 
 func TestSet_Remove_multiple(t *testing.T) {
-	s := New()
-	s.Add("ankara", "san francisco", 3.14, "istanbul")
-	s.Remove("ankara", "san francisco", 3.14)
+	s := New().Add("ankara", "san francisco", 3.14, "istanbul")
+	s = s.Remove("ankara", "san francisco", 3.14)
 
 	if s.Size() != 1 {
 		t.Error("Remove: items are not unique. The set size should be four")
@@ -105,12 +95,9 @@ func TestSet_Has(t *testing.T) {
 }
 
 func TestSet_Clear(t *testing.T) {
-	s := New()
-	s.Add(1)
-	s.Add("istanbul")
-	s.Add("san francisco")
+	s := New().Add(1).Add("istanbul").Add("san francisco")
 
-	s.Clear()
+	s = s.Clear()
 	if s.Size() != 0 {
 		t.Error("Clear: set size should be zero")
 	}
@@ -119,26 +106,22 @@ func TestSet_Clear(t *testing.T) {
 func TestSet_IsEmpty(t *testing.T) {
 	s := New()
 
-	empty := s.IsEmpty()
-	if !empty {
+	if !s.IsEmpty() {
 		t.Error("IsEmpty: set is empty, it should be true")
 	}
 
-	s.Add(2)
-	s.Add(3)
-	notEmpty := s.IsEmpty()
+	s = s.Add(2).Add(3)
 
-	if notEmpty {
+	if s.IsEmpty() {
 		t.Error("IsEmpty: set is filled, it should be false")
 	}
 }
 
 func TestSet_IsEqual(t *testing.T) {
 	s := New("1", "2", "3")
-	u := New("1", "2", "3")
+	u := New("3", "2", "1")
 
-	ok := s.IsEqual(u)
-	if !ok {
+	if !s.IsEqual(u) {
 		t.Error("IsEqual: set s and t are equal. However it returns false")
 	}
 }
@@ -147,13 +130,11 @@ func TestSet_IsSubset(t *testing.T) {
 	s := New("1", "2", "3", "4")
 	u := New("1", "2", "3")
 
-	ok := s.IsSubset(u)
-	if !ok {
+	if !s.IsSubset(u) {
 		t.Error("IsSubset: u is a subset of s. However it returns false")
 	}
 
-	ok = u.IsSubset(s)
-	if ok {
+	if u.IsSubset(s) {
 		t.Error("IsSubset: s is not a subset of u. However it returns true")
 	}
 
@@ -163,13 +144,11 @@ func TestSet_IsSuperset(t *testing.T) {
 	s := New("1", "2", "3", "4")
 	u := New("1", "2", "3")
 
-	ok := u.IsSuperset(s)
-	if !ok {
+	if !u.IsSuperset(s) {
 		t.Error("IsSuperset: s is a superset of u. However it returns false")
 	}
 
-	ok = s.IsSuperset(u)
-	if ok {
+	if s.IsSuperset(u) {
 		t.Error("IsSuperset: u is not a superset of u. However it returns true")
 	}
 
@@ -225,7 +204,7 @@ func TestSet_Union(t *testing.T) {
 func TestSet_Merge(t *testing.T) {
 	s := New("1", "2", "3")
 	r := New("3", "4", "5")
-	s.Merge(r)
+	s = s.Merge(r)
 
 	if s.Size() != 5 {
 		t.Error("Merge: the set doesn't have all items in it.")
@@ -236,17 +215,17 @@ func TestSet_Merge(t *testing.T) {
 	}
 }
 
-func TestSet_Separate(t *testing.T) {
+func TestSet_Exclude(t *testing.T) {
 	s := New("1", "2", "3")
 	r := New("3", "5")
-	s.Separate(r)
+	s = s.Exclude(r)
 
 	if s.Size() != 2 {
-		t.Error("Separate: the set doesn't have all items in it.")
+		t.Error("Exclude: the set doesn't have all items in it.")
 	}
 
 	if !s.Has("1") || !s.Has("2") {
-		t.Error("Separate: items after separation are not availabile in the set.")
+		t.Error("Exclude: items after separation are not availabile in the set.")
 	}
 }
 
