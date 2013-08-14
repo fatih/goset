@@ -200,7 +200,7 @@ func (s *Set) Merge(t *Set) {
 	s.Lock()
 	t.Rlock()
 	for _, item := range t.m {
-		s.m[item] = struct{}
+		s.m[item] = struct{}{}
 	}
 	t.Unlock()
 	s.Unlock()
