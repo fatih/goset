@@ -70,7 +70,7 @@ func (s setNonTS) IsEqual(t Interface) bool {
 	}
 
 	// return false if they are no the same size
-	if sameSize := len(s) == t.Size(); !sameSize {
+	if len(s) != t.Size() {
 		return false
 	}
 
