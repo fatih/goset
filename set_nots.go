@@ -9,7 +9,7 @@ import (
 type setNonTS map[interface{}]struct{} // struct{} doesn't take up space
 
 // NewNonTS creates and initializes a new non-threadsafe Set.
-func newNonTS() Interface {
+func newNonTS() setNonTS {
 	return setNonTS(make(map[interface{}]struct{}))
 }
 
@@ -55,11 +55,6 @@ func (s setNonTS) Has(items ...interface{}) bool {
 func (s setNonTS) Size() int {
 	return len(s)
 }
-
-// Clear removes all items from the set.
-//func (s *setNonTS) Clear() {
-//s = newNonTS()
-//}
 
 // IsEmpty reports whether the Set is empty.
 func (s setNonTS) IsEmpty() bool {
@@ -125,16 +120,6 @@ func (s setNonTS) Copy() Interface {
 	return u
 }
 
-// String returns a string representation of s
-func (s setNonTS) String() string {
-	t := make([]string, 0, len(s.List()))
-	for _, item := range s.List() {
-		t = append(t, fmt.Sprintf("%v", item))
-	}
-
-	return fmt.Sprintf("[%s]", strings.Join(t, ", "))
-}
-
 // List returns a slice of all items. There is also StringSlice() and
 // IntSlice() methods for returning slices of type string or int.
 func (s setNonTS) List() []interface{} {
@@ -145,6 +130,16 @@ func (s setNonTS) List() []interface{} {
 	}
 
 	return list
+}
+
+// String returns a string representation of s
+func (s setNonTS) String() string {
+	t := make([]string, len(s.List()))
+	for i, item := range s.List() {
+		t[i] = fmt.Sprintf("%v", item)
+	}
+
+	return fmt.Sprintf("[%s]", strings.Join(t, ", "))
 }
 
 // Merge is like Union, however it modifies the current set it's applied on

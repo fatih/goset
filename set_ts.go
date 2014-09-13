@@ -1,23 +1,19 @@
 package set
 
-import (
-	"fmt"
-	"strings"
-	"sync"
-)
+import "sync"
 
 // set defines a thread safe set data structure.
 type set struct {
-	m map[interface{}]struct{}
+	s setNonTS
 	l *sync.RWMutex // we name it because we don't want to expose it
 }
 
 // New creates and initialize a new set. It's accept a variable number of
 // arguments to populate the initial set. If nothing passed a set with zero
 // size is created.
-func newTS() Interface {
+func newTS() set {
 	return set{
-		m: make(map[interface{}]struct{}),
+		s: newNonTS(),
 		l: new(sync.RWMutex),
 	}
 }
@@ -28,9 +24,7 @@ func (s set) Add(items ...interface{}) {
 	s.l.Lock()
 	defer s.l.Unlock()
 
-	for _, item := range items {
-		s.m[item] = keyExists
-	}
+	s.s.Add(items...)
 }
 
 // Remove deletes the specified items from the set.  The underlying set s is
@@ -39,20 +33,16 @@ func (s set) Remove(items ...interface{}) {
 	s.l.Lock()
 	defer s.l.Unlock()
 
-	for _, item := range items {
-		delete(s.m, item)
-	}
+	s.s.Remove(items...)
 }
 
 // Pop  deletes and return an item from the set. The underlying set s is
 // modified. If set is empty, nil is returned.
 func (s set) Pop() interface{} {
 	s.l.RLock()
-	for item := range s.m {
+	for item := range s.s {
 		s.l.RUnlock()
-		s.l.Lock()
-		delete(s.m, item)
-		s.l.Unlock()
+		s.Remove(item)
 		return item
 	}
 	s.l.RUnlock()
@@ -65,12 +55,7 @@ func (s set) Has(items ...interface{}) bool {
 	s.l.RLock()
 	defer s.l.RUnlock()
 
-	for _, item := range items {
-		if _, has := s.m[item]; !has {
-			return false
-		}
-	}
-	return len(items) != 0
+	return s.s.Has(items...)
 }
 
 // Size returns the number of items in a set.
@@ -78,7 +63,7 @@ func (s set) Size() int {
 	s.l.RLock()
 	defer s.l.RUnlock()
 
-	return len(s.m)
+	return s.s.Size()
 }
 
 // IsEqual test whether s and t are the same in size and have the same items.
@@ -86,24 +71,7 @@ func (s set) IsEqual(t Interface) bool {
 	s.l.RLock()
 	defer s.l.RUnlock()
 
-	// Force locking only if given set is threadsafe.
-	if conv, ok := t.(set); ok {
-		conv.l.RLock()
-		defer conv.l.RUnlock()
-	}
-
-	// return false if they are no the same size
-	if sameSize := len(s.m) == t.Size(); !sameSize {
-		return false
-	}
-
-	equal := true
-	t.Each(func(item interface{}) bool {
-		_, equal = s.m[item]
-		return equal // if false, Each() will end
-	})
-
-	return equal
+	return s.s.IsEqual(t)
 }
 
 // IsSubset tests whether t is a subset of s.
@@ -111,14 +79,7 @@ func (s set) IsSubset(t Interface) (subset bool) {
 	s.l.RLock()
 	defer s.l.RUnlock()
 
-	subset = true
-
-	t.Each(func(item interface{}) bool {
-		_, subset = s.m[item]
-		return subset
-	})
-
-	return
+	return s.s.IsSubset(t)
 }
 
 // Each traverses the items in the set, calling the provided function for each
@@ -128,11 +89,7 @@ func (s set) Each(f func(item interface{}) bool) {
 	s.l.RLock()
 	defer s.l.RUnlock()
 
-	for item := range s.m {
-		if !f(item) {
-			break
-		}
-	}
+	s.s.Each(f)
 }
 
 // List returns a slice of all items. There is also StringSlice() and
@@ -141,31 +98,35 @@ func (s set) List() []interface{} {
 	s.l.RLock()
 	defer s.l.RUnlock()
 
-	list := make([]interface{}, 0, len(s.m))
-
-	for item := range s.m {
-		list = append(list, item)
-	}
-
-	return list
+	return s.s.List()
 }
 
 // Copy returns a new set with a copy of s.
 func (s set) Copy() Interface {
-	u := newTS()
-	for item := range s.m {
-		u.Add(item)
+	s.l.RLock()
+	defer s.l.RUnlock()
+
+	// could not directly return s.s.Copy()
+	// because s.s.Copy is typeof setNonTS
+	return set{
+		s: s.s.Copy().(setNonTS),
+		l: new(sync.RWMutex),
 	}
-	return u
 }
 
 // IsSuperset tests whether t is a superset of s.
 func (s set) IsSuperset(t Interface) bool {
-	return t.IsSubset(s)
+	s.l.RLock()
+	defer s.l.RUnlock()
+
+	return s.s.IsSuperset(t)
 }
 
 func (s set) IsEmpty() bool {
-	return s.Size() == 0
+	s.l.RLock()
+	defer s.l.RUnlock()
+
+	return s.s.IsEmpty()
 }
 
 // Merge is like Union, however it modifies the current set it's applied on
@@ -174,23 +135,22 @@ func (s set) Merge(t Interface) {
 	s.l.Lock()
 	defer s.l.Unlock()
 
-	t.Each(func(item interface{}) bool {
-		s.m[item] = keyExists
-		return true
-	})
+	s.s.Merge(t)
 }
 
 // it's not the opposite of Merge.
 // Separate removes the set items containing in t from set s. Please aware that
 func (s set) Separate(t Interface) {
-	s.Remove(t.List()...)
+	s.l.Lock()
+	defer s.l.Unlock()
+
+	s.s.Separate(t)
 }
 
 // String returns a string representation of s
 func (s set) String() string {
-	t := make([]string, 0, len(s.List()))
-	for _, item := range s.List() {
-		t = append(t, fmt.Sprintf("%v", item))
-	}
-	return fmt.Sprintf("[%s]", strings.Join(t, ", "))
+	s.l.RLock()
+	defer s.l.RUnlock()
+
+	return s.s.String()
 }
