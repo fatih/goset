@@ -62,9 +62,6 @@ item := s.Pop()
 // create a new copy
 other := s.Copy()
 
-// remove all items
-s.Clear()
-
 // number of items in the set
 len := s.Size()
 

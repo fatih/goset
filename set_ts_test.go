@@ -133,18 +133,6 @@ func TestSet_Has(t *testing.T) {
 	}
 }
 
-func TestSet_Clear(t *testing.T) {
-	s := newTS()
-	s.Add(1)
-	s.Add("istanbul")
-	s.Add("san francisco")
-
-	s.Clear()
-	if s.Size() != 0 {
-		t.Error("Clear: set size should be zero")
-	}
-}
-
 func TestSet_IsEmpty(t *testing.T) {
 	s := newTS()
 

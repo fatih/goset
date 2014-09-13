@@ -14,13 +14,10 @@ const (
 )
 
 func (s SetType) String() string {
-	switch s {
-	case ThreadSafe:
-		return "ThreadSafe"
-	case NonThreadSafe:
+	if s == NonThreadSafe {
 		return "NonThreadSafe"
 	}
-	return ""
+	return "ThreadSafe"
 }
 
 // Interface is describing a Set. Sets are an unordered, unique list of values.
@@ -30,7 +27,6 @@ type Interface interface {
 	Pop() interface{}
 	Has(items ...interface{}) bool
 	Size() int
-	Clear()
 	IsEmpty() bool
 	IsEqual(s Interface) bool
 	IsSubset(s Interface) bool

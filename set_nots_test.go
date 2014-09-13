@@ -122,18 +122,6 @@ func TestSetNonTS_Has(t *testing.T) {
 	}
 }
 
-func TestSetNonTS_Clear(t *testing.T) {
-	s := newNonTS()
-	s.Add(1)
-	s.Add("istanbul")
-	s.Add("san francisco")
-
-	s.Clear()
-	if s.Size() != 0 {
-		t.Error("Clear: set size should be zero")
-	}
-}
-
 func TestSetNonTS_IsEmpty(t *testing.T) {
 	s := newNonTS()
 
