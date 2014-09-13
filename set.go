@@ -30,7 +30,7 @@ type Interface interface {
 	Pop() interface{}
 	Has(items ...interface{}) bool
 	Size() int
-	Clear()
+	//Clear()
 	IsEmpty() bool
 	IsEqual(s Interface) bool
 	IsSubset(s Interface) bool

@@ -14,7 +14,7 @@ func Test_Union(t *testing.T) {
 	x.Add("5", "6", "7")
 
 	u := Union(s, r, x)
-	if settype := reflect.TypeOf(u).String(); settype != "*set.Set" {
+	if settype := reflect.TypeOf(u).String(); settype != "set.set" {
 		t.Error("Union should derive its set type from the first passed set, got", settype)
 	}
 	if u.Size() != 7 {
@@ -29,7 +29,7 @@ func Test_Union(t *testing.T) {
 	if z.Size() != 5 {
 		t.Error("Union: Union of 2 sets doesn't have the proper number of items.")
 	}
-	if settype := reflect.TypeOf(z).String(); settype != "*set.SetNonTS" {
+	if settype := reflect.TypeOf(z).String(); settype != "set.setNonTS" {
 		t.Error("Union should derive its set type from the first passed set, got", settype)
 	}
 
