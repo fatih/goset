@@ -120,7 +120,7 @@ func SymmetricDifference(s Interface, t Interface) Interface {
 // StringSlice is a helper function that returns a slice of strings of s. If
 // the set contains mixed types of items only items of type string are returned.
 func StringSlice(s Interface) []string {
-	slice := make([]string, 0)
+	slice := make([]string, 0, s.Size())
 	for _, item := range s.List() {
 		v, ok := item.(string)
 		if !ok {
@@ -135,7 +135,7 @@ func StringSlice(s Interface) []string {
 // IntSlice is a helper function that returns a slice of ints of s. If
 // the set contains mixed types of items only items of type int are returned.
 func IntSlice(s Interface) []int {
-	slice := make([]int, 0)
+	slice := make([]int, 0, s.Size())
 	for _, item := range s.List() {
 		v, ok := item.(int)
 		if !ok {
@@ -143,6 +143,21 @@ func IntSlice(s Interface) []int {
 		}
 
 		slice = append(slice, v)
+	}
+	return slice
+}
+
+// Int64Slice is a helper function that returns a slice of int64s of s. If
+// the set contains mixed types of items only items of type int64 are returned.
+func Int64Slice(s Interface) []int64 {
+	slice := make([]int64, 0, s.Size())
+	for _, item := range s.List() {
+		v, ok := item.(int)
+		if !ok {
+			continue
+		}
+
+		slice = append(slice, int64(v))
 	}
 	return slice
 }
