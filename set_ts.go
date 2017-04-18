@@ -113,6 +113,11 @@ func (s *Set) Clear() {
 	s.m = make(map[interface{}]struct{})
 }
 
+// IsEmpty reports whether the Set is empty.
+func (s *Set) IsEmpty() bool {
+	return s.Size() == 0
+}
+
 // IsEqual test whether s and t are the same in size and have the same items.
 func (s *Set) IsEqual(t Interface) bool {
 	s.l.RLock()
