@@ -5,15 +5,18 @@
 // between the start and the end of the operation.
 package set
 
-// SetType denotes which type of set is created. ThreadSafe or NonThreadSafe
-type SetType int
+// Type denotes which type of set is created. ThreadSafe or NonThreadSafe
+type Type int
 
 const (
+	// ThreadSafe defines a thread safe set
 	ThreadSafe = iota
+
+	// NonThreadSafe defines a non thread safe set
 	NonThreadSafe
 )
 
-func (s SetType) String() string {
+func (s Type) String() string {
 	switch s {
 	case ThreadSafe:
 		return "ThreadSafe"
@@ -49,7 +52,7 @@ var keyExists = struct{}{}
 // New creates and initalizes a new Set interface. Its single parameter
 // denotes the type of set to create. Either ThreadSafe or
 // NonThreadSafe. The default is ThreadSafe.
-func New(settype SetType) Interface {
+func New(settype Type) Interface {
 	if settype == NonThreadSafe {
 		return newNonTS()
 	}
