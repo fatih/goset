@@ -14,7 +14,7 @@ func Test_New(t *testing.T) {
 	}
 }
 
-func TestSetNonTS_Add(t *testing.T) {
+func TestNonTS_Add(t *testing.T) {
 	s := New(NonThreadSafe)
 	s.Add(1)
 	s.Add(2)
@@ -32,7 +32,7 @@ func TestSetNonTS_Add(t *testing.T) {
 	}
 }
 
-func TestSetNonTS_Add_multiple(t *testing.T) {
+func TestNonTS_Add_multiple(t *testing.T) {
 	s := newNonTS()
 	s.Add("ankara", "san francisco", 3.14)
 
@@ -45,7 +45,7 @@ func TestSetNonTS_Add_multiple(t *testing.T) {
 	}
 }
 
-func TestSetNonTS_Remove(t *testing.T) {
+func TestNonTS_Remove(t *testing.T) {
 	s := newNonTS()
 	s.Add(1)
 	s.Add(2)
@@ -70,7 +70,7 @@ func TestSetNonTS_Remove(t *testing.T) {
 	s.Remove("fatih") // try to remove something from a zero length set
 }
 
-func TestSetNonTS_Remove_multiple(t *testing.T) {
+func TestNonTS_Remove_multiple(t *testing.T) {
 	s := newNonTS()
 	s.Add("ankara", "san francisco", 3.14, "istanbul")
 	s.Remove("ankara", "san francisco", 3.14)
@@ -84,7 +84,7 @@ func TestSetNonTS_Remove_multiple(t *testing.T) {
 	}
 }
 
-func TestSetNonTS_Pop(t *testing.T) {
+func TestNonTS_Pop(t *testing.T) {
 	s := newNonTS()
 	s.Add(1)
 	s.Add(2)
@@ -109,7 +109,7 @@ func TestSetNonTS_Pop(t *testing.T) {
 	s.Pop() // try to remove something from a zero length set
 }
 
-func TestSetNonTS_Has(t *testing.T) {
+func TestNonTS_Has(t *testing.T) {
 	s := newNonTS()
 	s.Add("1", "2", "3", "4")
 
@@ -122,7 +122,7 @@ func TestSetNonTS_Has(t *testing.T) {
 	}
 }
 
-func TestSetNonTS_Clear(t *testing.T) {
+func TestNonTS_Clear(t *testing.T) {
 	s := newNonTS()
 	s.Add(1)
 	s.Add("istanbul")
@@ -134,7 +134,7 @@ func TestSetNonTS_Clear(t *testing.T) {
 	}
 }
 
-func TestSetNonTS_IsEmpty(t *testing.T) {
+func TestNonTS_IsEmpty(t *testing.T) {
 	s := newNonTS()
 
 	empty := s.IsEmpty()
@@ -151,7 +151,7 @@ func TestSetNonTS_IsEmpty(t *testing.T) {
 	}
 }
 
-func TestSetNonTS_IsEqual(t *testing.T) {
+func TestNonTS_IsEqual(t *testing.T) {
 	s := newNonTS()
 	s.Add("1", "2", "3")
 	u := newNonTS()
@@ -185,7 +185,7 @@ func TestSetNonTS_IsEqual(t *testing.T) {
 	}
 }
 
-func TestSetNonTS_IsSubset(t *testing.T) {
+func TestNonTS_IsSubset(t *testing.T) {
 	s := newNonTS()
 	s.Add("1", "2", "3", "4")
 	u := newNonTS()
@@ -203,7 +203,7 @@ func TestSetNonTS_IsSubset(t *testing.T) {
 
 }
 
-func TestSetNonTS_IsSuperset(t *testing.T) {
+func TestNonTS_IsSuperset(t *testing.T) {
 	s := newNonTS()
 	s.Add("1", "2", "3", "4")
 	u := newNonTS()
@@ -221,7 +221,7 @@ func TestSetNonTS_IsSuperset(t *testing.T) {
 
 }
 
-func TestSetNonTS_String(t *testing.T) {
+func TestNonTS_String(t *testing.T) {
 	s := newNonTS()
 	if s.String() != "[]" {
 		t.Errorf("String: output is not what is excepted '%s'", s.String())
@@ -238,7 +238,7 @@ func TestSetNonTS_String(t *testing.T) {
 	}
 }
 
-func TestSetNonTS_List(t *testing.T) {
+func TestNonTS_List(t *testing.T) {
 	s := newNonTS()
 	s.Add("1", "2", "3", "4")
 	s = newNonTS()
@@ -257,7 +257,7 @@ func TestSetNonTS_List(t *testing.T) {
 	}
 }
 
-func TestSetNonTS_Copy(t *testing.T) {
+func TestNonTS_Copy(t *testing.T) {
 	s := newNonTS()
 	s.Add("1", "2", "3", "4")
 	r := s.Copy()
@@ -267,7 +267,7 @@ func TestSetNonTS_Copy(t *testing.T) {
 	}
 }
 
-func TestSetNonTS_Merge(t *testing.T) {
+func TestNonTS_Merge(t *testing.T) {
 	s := newNonTS()
 	s.Add("1", "2", "3")
 	r := newNonTS()
@@ -283,7 +283,7 @@ func TestSetNonTS_Merge(t *testing.T) {
 	}
 }
 
-func TestSetNonTS_Separate(t *testing.T) {
+func TestNonTS_Separate(t *testing.T) {
 	s := newNonTS()
 	s.Add("1", "2", "3")
 	r := newNonTS()

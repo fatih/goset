@@ -10,14 +10,14 @@ type set struct {
 	m map[interface{}]struct{} // struct{} doesn't take up space
 }
 
-// SetNonTS defines a non-thread safe set data structure.
-type SetNonTS struct {
+// NonTS defines a non-thread safe set data structure.
+type NonTS struct {
 	set
 }
 
 // NewNonTS creates and initializes a new non-threadsafe Set.
-func newNonTS() *SetNonTS {
-	s := &SetNonTS{}
+func newNonTS() *NonTS {
+	s := &NonTS{}
 	s.m = make(map[interface{}]struct{})
 
 	// Ensure interface compliance
